@@ -48,7 +48,7 @@ export const CalendarPage = () => {
     console.log({ click: event });
   };
 
-  // Esta funcion se ejecutara cuando cambie la vista del calendar, por ejemplo de mes a semana o se semana a agenda, etc.
+  // Esta funcion se ejecutara cuando cambie la vista del calendar, por ejemplo de mes a semana o de semana a agenda, etc.
   const onViewChanged = (event) => {
     localStorage.setItem('lastView', event);
   };
