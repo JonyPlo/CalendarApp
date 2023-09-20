@@ -1,4 +1,4 @@
-import { addHours } from 'date-fns';
+import { addHours, differenceInSeconds } from 'date-fns';
 import { useState } from 'react';
 import Modal from 'react-modal';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -50,6 +50,20 @@ export const CalendarModal = () => {
     setIsOpen(false);
   };
 
+  const onSubmit = (event) => {
+    event.preventDefault();
+
+    const difference = differenceInSeconds(formValues.end, formValues.start); // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora de una fecha y la otra
+
+    if (isNaN(difference) || difference <= 0) {
+      console.log('Error en fechas');
+      return;
+    }
+
+    if (formValues.title.length <= 0) return;
+    console.log(formValues);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -61,7 +75,7 @@ export const CalendarModal = () => {
     >
       <h1>Nuevo evento</h1>
       <hr />
-      <form>
+      <form onSubmit={onSubmit}>
         <div className='form-group mb-2'>
           <label className='d-block'>Fecha y hora inicio</label>
           <DatePicker
@@ -123,8 +137,8 @@ export const CalendarModal = () => {
 
         <div className='d-flex justify-content-end'>
           <button type='submit' className='btn btn-outline-primary'>
-            <i className='far fa-save'></i>
-            <span> Guardar</span>
+            <i className='far fa-save me-2'></i>
+            <span>Guardar</span>
           </button>
         </div>
       </form>
