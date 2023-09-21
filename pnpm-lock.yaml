@@ -29,6 +29,9 @@ dependencies:
   react-router-dom:
     specifier: 6.16.0
     version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
+  sweetalert2:
+    specifier: 11.7.28
+    version: 11.7.28
 
 devDependencies:
   '@babel/preset-env':
@@ -6437,6 +6440,10 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
     dev: true
+
+  /sweetalert2@11.7.28:
+    resolution: {integrity: sha512-9895DVuYTDlV4Hx4IJablFKMdSqzwpy0PKycztbO4cXnOeVMmw55weOq4gcZAh3/tAyunCKjApFDrlSAcswwcA==}
+    dev: false
 
   /symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}

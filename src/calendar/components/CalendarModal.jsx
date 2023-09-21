@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
+import Swal from 'sweetalert2';
+import { useMemo } from 'react';
 
 registerLocale('es', es);
 
@@ -22,6 +24,7 @@ Modal.setAppElement('#root'); // Esto hace que el modal se sobreponga ante todo,
 
 export const CalendarModal = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formValues, setFormValues] = useState({
     title: 'Jonathan',
@@ -29,6 +32,12 @@ export const CalendarModal = () => {
     start: new Date(),
     end: addHours(new Date(), 2),
   });
+
+  const titleClass = useMemo(() => {
+    if (!formSubmitted) return '';
+
+    return formValues.title.length > 0 ? '' : 'is-invalid';
+  }, [formValues.title, formSubmitted]);
 
   const onInputChange = ({ target }) => {
     const { name, value } = target;
@@ -52,12 +61,16 @@ export const CalendarModal = () => {
 
   const onSubmit = (event) => {
     event.preventDefault();
+    setFormSubmitted(true);
 
     const difference = differenceInSeconds(formValues.end, formValues.start); // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora de una fecha y la otra
 
     if (isNaN(difference) || difference <= 0) {
-      console.log('Error en fechas');
-      return;
+      return Swal.fire(
+        'Fechas incorrectas!',
+        'Revisar las fechas ingresadas!',
+        'error'
+      );
     }
 
     if (formValues.title.length <= 0) return;
@@ -108,7 +121,7 @@ export const CalendarModal = () => {
           <label>Titulo y notas</label>
           <input
             type='text'
-            className='form-control'
+            className={`form-control ${titleClass}`}
             placeholder='Título del evento'
             name='title'
             autoComplete='off'
