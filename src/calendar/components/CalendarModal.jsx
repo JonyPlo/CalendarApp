@@ -1,12 +1,12 @@
 import { addHours, differenceInSeconds } from 'date-fns';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
 import Swal from 'sweetalert2';
-import { useMemo } from 'react';
 import { useUiStore } from '../../hooks/useUiStore';
+import { useCalendarStore } from '../../hooks';
 
 registerLocale('es', es);
 
@@ -24,12 +24,13 @@ const customStyles = {
 Modal.setAppElement('#root'); // Esto hace que el modal se sobreponga ante todo, lo que va dentro de los parentesis es el elemento html del index.html que contiene el id del root de la aplicacion, en este caso es un div con un id llamado root
 
 export const CalendarModal = () => {
-  const {isDateModalOpen, closeDateModal} = useUiStore()
+  const { isDateModalOpen, closeDateModal } = useUiStore();
+  const { activeEvent } = useCalendarStore();
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formValues, setFormValues] = useState({
-    title: 'Jonathan',
-    notes: 'Plodzien',
+    title: '',
+    notes: '',
     start: new Date(),
     end: addHours(new Date(), 2),
   });
@@ -39,6 +40,12 @@ export const CalendarModal = () => {
 
     return formValues.title.length > 0 ? '' : 'is-invalid';
   }, [formValues.title, formSubmitted]);
+
+  useEffect(() => {
+    if (activeEvent !== null) {
+      setFormValues({ ...activeEvent });
+    }
+  }, [activeEvent]);
 
   const onInputChange = ({ target }) => {
     const { name, value } = target;
@@ -56,7 +63,7 @@ export const CalendarModal = () => {
   };
 
   const onCloseModal = () => {
-    closeDateModal()
+    closeDateModal();
   };
 
   const onSubmit = (event) => {
