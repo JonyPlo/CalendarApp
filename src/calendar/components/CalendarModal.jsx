@@ -1,8 +1,13 @@
-import { addHours } from 'date-fns';
+import { addHours, differenceInSeconds } from 'date-fns';
 import { useState } from 'react';
 import Modal from 'react-modal';
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import es from 'date-fns/locale/es';
+import Swal from 'sweetalert2';
+import { useMemo } from 'react';
+
+registerLocale('es', es);
 
 const customStyles = {
   content: {
@@ -19,6 +24,7 @@ Modal.setAppElement('#root'); // Esto hace que el modal se sobreponga ante todo,
 
 export const CalendarModal = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formValues, setFormValues] = useState({
     title: 'Jonathan',
@@ -26,6 +32,12 @@ export const CalendarModal = () => {
     start: new Date(),
     end: addHours(new Date(), 2),
   });
+
+  const titleClass = useMemo(() => {
+    if (!formSubmitted) return '';
+
+    return formValues.title.length > 0 ? '' : 'is-invalid';
+  }, [formValues.title, formSubmitted]);
 
   const onInputChange = ({ target }) => {
     const { name, value } = target;
@@ -47,6 +59,24 @@ export const CalendarModal = () => {
     setIsOpen(false);
   };
 
+  const onSubmit = (event) => {
+    event.preventDefault();
+    setFormSubmitted(true);
+
+    const difference = differenceInSeconds(formValues.end, formValues.start); // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora de una fecha y la otra
+
+    if (isNaN(difference) || difference <= 0) {
+      return Swal.fire(
+        'Fechas incorrectas!',
+        'Revisar las fechas ingresadas!',
+        'error'
+      );
+    }
+
+    if (formValues.title.length <= 0) return;
+    console.log(formValues);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -56,9 +86,9 @@ export const CalendarModal = () => {
       overlayClassName={'modal-fondo'}
       closeTimeoutMS={200}
     >
-      <h1> Nuevo evento </h1>
+      <h1>Nuevo evento</h1>
       <hr />
-      <form>
+      <form onSubmit={onSubmit}>
         <div className='form-group mb-2'>
           <label className='d-block'>Fecha y hora inicio</label>
           <DatePicker
@@ -66,6 +96,9 @@ export const CalendarModal = () => {
             className='form-control d-block'
             onChange={(event) => onDateChanged(event, 'start')}
             dateFormat='Pp'
+            showTimeSelect
+            locale={'es'}
+            timeCaption='Hora'
           />
         </div>
 
@@ -77,6 +110,9 @@ export const CalendarModal = () => {
             className='form-control d-block'
             onChange={(event) => onDateChanged(event, 'end')}
             dateFormat='Pp'
+            showTimeSelect
+            locale={'es'}
+            timeCaption='Hora'
           />
         </div>
 
@@ -85,7 +121,7 @@ export const CalendarModal = () => {
           <label>Titulo y notas</label>
           <input
             type='text'
-            className='form-control'
+            className={`form-control ${titleClass}`}
             placeholder='Título del evento'
             name='title'
             autoComplete='off'
@@ -114,8 +150,8 @@ export const CalendarModal = () => {
 
         <div className='d-flex justify-content-end'>
           <button type='submit' className='btn btn-outline-primary'>
-            <i className='far fa-save'></i>
-            <span> Guardar</span>
+            <i className='far fa-save me-2'></i>
+            <span>Guardar</span>
           </button>
         </div>
       </form>
