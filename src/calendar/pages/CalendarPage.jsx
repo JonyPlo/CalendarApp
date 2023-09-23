@@ -3,25 +3,12 @@ import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { CalendarEvent, CalendarModal, Navbar } from '..';
-import { addHours } from 'date-fns';
 import { localizer, getMessages } from '../../helpers';
 import { useUiStore } from '../../hooks';
-
-const events = [
-  {
-    title: 'Cumpleaños del Jefe',
-    notes: 'Hay que comprar el pastel',
-    start: new Date(),
-    end: addHours(new Date(), 2),
-    bgColor: '#fafafa',
-    user: {
-      _id: '123',
-      name: 'Jonathan',
-    },
-  },
-];
+import { useCalendarStore } from '../../hooks';
 
 export const CalendarPage = () => {
+  const { events } = useCalendarStore();
   const { openDateModal } = useUiStore();
   // eslint-disable-next-line no-unused-vars
   const [lastView, seTlastView] = useState(
