@@ -8,7 +8,7 @@ import { useUiStore } from '../../hooks';
 import { useCalendarStore } from '../../hooks';
 
 export const CalendarPage = () => {
-  const { events } = useCalendarStore();
+  const { events, setActiveEvent } = useCalendarStore();
   const { openDateModal } = useUiStore();
   // eslint-disable-next-line no-unused-vars
   const [lastView, seTlastView] = useState(
@@ -34,7 +34,7 @@ export const CalendarPage = () => {
 
   // Esta funcion se ejecutara cuando se haga un click en el evento del calendar
   const onSelect = (event) => {
-    console.log({ click: event });
+    setActiveEvent(event);
   };
 
   // Esta funcion se ejecutara cuando cambie la vista del calendar, por ejemplo de mes a semana o de semana a agenda, etc.
