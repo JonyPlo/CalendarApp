@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
 import Swal from 'sweetalert2';
 import { useMemo } from 'react';
+import { useUiStore } from '../../hooks/useUiStore';
 
 registerLocale('es', es);
 
@@ -23,7 +24,7 @@ const customStyles = {
 Modal.setAppElement('#root'); // Esto hace que el modal se sobreponga ante todo, lo que va dentro de los parentesis es el elemento html del index.html que contiene el id del root de la aplicacion, en este caso es un div con un id llamado root
 
 export const CalendarModal = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const {isDateModalOpen, closeDateModal} = useUiStore()
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formValues, setFormValues] = useState({
@@ -54,9 +55,8 @@ export const CalendarModal = () => {
     });
   };
 
-  const closeModal = () => {
-    console.log('cerrando modal');
-    setIsOpen(false);
+  const onCloseModal = () => {
+    closeDateModal()
   };
 
   const onSubmit = (event) => {
@@ -79,8 +79,8 @@ export const CalendarModal = () => {
 
   return (
     <Modal
-      isOpen={isOpen}
-      onRequestClose={closeModal}
+      isOpen={isDateModalOpen}
+      onRequestClose={onCloseModal}
       style={customStyles}
       className='modal'
       overlayClassName={'modal-fondo'}

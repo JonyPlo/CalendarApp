@@ -5,6 +5,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { CalendarEvent, CalendarModal, Navbar } from '..';
 import { addHours } from 'date-fns';
 import { localizer, getMessages } from '../../helpers';
+import { useUiStore } from '../../hooks';
 
 const events = [
   {
@@ -21,6 +22,7 @@ const events = [
 ];
 
 export const CalendarPage = () => {
+  const { openDateModal } = useUiStore();
   // eslint-disable-next-line no-unused-vars
   const [lastView, seTlastView] = useState(
     localStorage.getItem('lastView') || 'week'
@@ -39,8 +41,8 @@ export const CalendarPage = () => {
   };
 
   // Esta funcion se ejecutara cuando se haga doble click en el evento del calendar
-  const onDoubleClick = (event) => {
-    console.log({ doubleClick: event });
+  const onDoubleClick = () => {
+    openDateModal();
   };
 
   // Esta funcion se ejecutara cuando se haga un click en el evento del calendar
