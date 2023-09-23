@@ -14,6 +14,7 @@
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "1.9.5",
     "conventional-changelog-cli": "4.1.0",
     "date-fns": "2.30.0",
     "react": "18.2.0",
@@ -21,6 +22,7 @@
     "react-datepicker": "4.18.0",
     "react-dom": "18.2.0",
     "react-modal": "3.16.1",
+    "react-redux": "8.1.2",
     "react-router-dom": "6.16.0",
     "sweetalert2": "11.7.28"
   },
