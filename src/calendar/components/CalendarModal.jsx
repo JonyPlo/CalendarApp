@@ -25,7 +25,7 @@ Modal.setAppElement('#root'); // Esto hace que el modal se sobreponga ante todo,
 
 export const CalendarModal = () => {
   const { isDateModalOpen, closeDateModal } = useUiStore();
-  const { activeEvent } = useCalendarStore();
+  const { activeEvent, startSavingEvent } = useCalendarStore();
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formValues, setFormValues] = useState({
@@ -64,13 +64,14 @@ export const CalendarModal = () => {
 
   const onCloseModal = () => {
     closeDateModal();
+    setFormSubmitted(false);
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     setFormSubmitted(true);
 
-    const difference = differenceInSeconds(formValues.end, formValues.start); // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora de una fecha y la otra
+    const difference = differenceInSeconds(formValues.end, formValues.start); // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora inicial y la hora de fin
 
     if (isNaN(difference) || difference <= 0) {
       return Swal.fire(
@@ -81,7 +82,9 @@ export const CalendarModal = () => {
     }
 
     if (formValues.title.length <= 0) return;
-    console.log(formValues);
+
+    await startSavingEvent(formValues);
+    onCloseModal();
   };
 
   return (
@@ -113,7 +116,7 @@ export const CalendarModal = () => {
           <label>Fecha y hora fin</label>
           <DatePicker
             minDate={formValues.start}
-            selected={formValues.start}
+            selected={formValues.end}
             className='form-control d-block'
             onChange={(event) => onDateChanged(event, 'end')}
             dateFormat='Pp'
