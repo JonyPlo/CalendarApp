@@ -1,5 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { onAddNewEvent, onSetActiveEvent, onUpdateEvent } from '../store';
+import {
+  onAddNewEvent,
+  onDeleteEvent,
+  onSetActiveEvent,
+  onUpdateEvent,
+} from '../store';
 
 export const useCalendarStore = () => {
   const dispatch = useDispatch();
@@ -23,12 +28,18 @@ export const useCalendarStore = () => {
     }
   };
 
+  const startDeletingEvent = async () => {
+    dispatch(onDeleteEvent());
+  };
+
   return {
     //* Properties
     events,
     activeEvent,
+    hasEventSelected: Boolean(activeEvent),
 
     //* Methods
+    startDeletingEvent,
     setActiveEvent,
     startSavingEvent,
   };
