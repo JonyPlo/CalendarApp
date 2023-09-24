@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -8,14 +7,11 @@ import { useUiStore } from '../../hooks';
 import { useCalendarStore } from '../../hooks';
 
 export const CalendarPage = () => {
-  const { events, setActiveEvent } = useCalendarStore();
-  const { openDateModal } = useUiStore();
-  // eslint-disable-next-line no-unused-vars
-  const [lastView, seTlastView] = useState(
-    localStorage.getItem('lastView') || 'week'
-  );
+  const { events, setActiveEvent, removeActiveEvent } = useCalendarStore();
+  const { openDateModal, isDateModalOpen } = useUiStore();
 
-  // event, start, end, isSelected
+  const lastView = localStorage.getItem('lastView') || 'week';
+
   const eventStyleGetter = () => {
     const style = {
       backgroundColor: '#347CF7',
@@ -27,19 +23,23 @@ export const CalendarPage = () => {
     return { style };
   };
 
-  // Esta funcion se ejecutara cuando se haga doble click en el evento del calendar
+  // Funcion que se ejecuta al hacer doble click en un evento
   const onDoubleClick = () => {
     openDateModal();
   };
 
-  // Esta funcion se ejecutara cuando se haga un click en el evento del calendar
+  // Funcion que se ejecuta al hacer un click en un evento
   const onSelect = (event) => {
     setActiveEvent(event);
   };
 
-  // Esta funcion se ejecutara cuando cambie la vista del calendar, por ejemplo de mes a semana o de semana a agenda, etc.
+  // Funcion que se ejecuta al cambiar la vista del calendar, por ejemplo cambiar de mes a semana o de semana a dia, etc.
   const onViewChanged = (event) => {
     localStorage.setItem('lastView', event);
+  };
+
+  const onSelectSlot = () => {
+    removeActiveEvent();
   };
 
   return (
@@ -62,10 +62,12 @@ export const CalendarPage = () => {
         onDoubleClickEvent={onDoubleClick}
         onSelectEvent={onSelect}
         onView={onViewChanged}
+        onSelectSlot={onSelectSlot}
+        selectable={true}
       />
       <CalendarModal />
       <FabAddNew />
-      <FabDelete />
+      <FabDelete isDateModalOpen={isDateModalOpen} />
     </>
   );
 };

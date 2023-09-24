@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   onAddNewEvent,
   onDeleteEvent,
+  onRemoveActiveEvent,
   onSetActiveEvent,
   onUpdateEvent,
 } from '../store';
@@ -12,6 +13,10 @@ export const useCalendarStore = () => {
 
   const setActiveEvent = (calendarEvent) => {
     dispatch(onSetActiveEvent(calendarEvent));
+  };
+
+  const removeActiveEvent = () => {
+    dispatch(onRemoveActiveEvent());
   };
 
   // Cuando el nombre de la funcion comienza con "start" quiere decir que va a iniciar un proceso de grabación, por lo tanto nos indica que sera funcion asíncrona
@@ -42,5 +47,6 @@ export const useCalendarStore = () => {
     startDeletingEvent,
     setActiveEvent,
     startSavingEvent,
+    removeActiveEvent,
   };
 };
