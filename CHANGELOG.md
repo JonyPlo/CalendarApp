@@ -1,5 +1,24 @@
+## 1.0.0 (2023-09-24)
+
+* fix: :adhesive_bandage: fix serialize date error ([588ac98](https://github.com/JonyPlo/CalendarApp/commit/588ac98))
+* feat: :lipstick: add submit function to the events form ([73f8bf4](https://github.com/JonyPlo/CalendarApp/commit/73f8bf4))
+* feat: :lipstick: change time location ([17071a9](https://github.com/JonyPlo/CalendarApp/commit/17071a9))
+* feat: :sparkles: add event data in the modal ([0f6cffd](https://github.com/JonyPlo/CalendarApp/commit/0f6cffd))
+* feat: :sparkles: add new event button ([1f4aca4](https://github.com/JonyPlo/CalendarApp/commit/1f4aca4))
+* feat: :sparkles: add new feature to delete events ([ddbf980](https://github.com/JonyPlo/CalendarApp/commit/ddbf980))
+* feat: :sparkles: add new features to the event modal ([1245384](https://github.com/JonyPlo/CalendarApp/commit/1245384))
+* feat: :sparkles: add redux tookit ([4463b83](https://github.com/JonyPlo/CalendarApp/commit/4463b83))
+* feat: :sparkles: add validations to the form ([d56a2dc](https://github.com/JonyPlo/CalendarApp/commit/d56a2dc))
+* feat: :sparkles: save new event in the store ([99bb8c0](https://github.com/JonyPlo/CalendarApp/commit/99bb8c0))
+* feat: add feature to update event ([c879704](https://github.com/JonyPlo/CalendarApp/commit/c879704))
+* feat(calendar): :sparkles: add calendar slice ([de0e89a](https://github.com/JonyPlo/CalendarApp/commit/de0e89a))
+* chore: :loud_sound: add logs ([3a72a1d](https://github.com/JonyPlo/CalendarApp/commit/3a72a1d))
+
+
+
 ## 0.2.0 (2023-09-20)
 
+* 0.2.0 ([4226118](https://github.com/JonyPlo/CalendarApp/commit/4226118))
 * feat: :lipstick: add calendar page layout ([e736c5c](https://github.com/JonyPlo/CalendarApp/commit/e736c5c))
 * feat: :lipstick: add form in event modal ([047483b](https://github.com/JonyPlo/CalendarApp/commit/047483b))
 * feat: :lipstick: add modal for events ([d27e39e](https://github.com/JonyPlo/CalendarApp/commit/d27e39e))

@@ -1,32 +1,17 @@
-import { useState } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import { CalendarEvent, CalendarModal, Navbar } from '..';
-import { addHours } from 'date-fns';
+import { CalendarEvent, CalendarModal, FabAddNew, FabDelete, Navbar } from '..';
 import { localizer, getMessages } from '../../helpers';
-
-const events = [
-  {
-    title: 'Cumpleaños del Jefe',
-    notes: 'Hay que comprar el pastel',
-    start: new Date(),
-    end: addHours(new Date(), 2),
-    bgColor: '#fafafa',
-    user: {
-      _id: '123',
-      name: 'Jonathan',
-    },
-  },
-];
+import { useUiStore } from '../../hooks';
+import { useCalendarStore } from '../../hooks';
 
 export const CalendarPage = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [lastView, seTlastView] = useState(
-    localStorage.getItem('lastView') || 'week'
-  );
+  const { events, setActiveEvent, removeActiveEvent } = useCalendarStore();
+  const { openDateModal, isDateModalOpen } = useUiStore();
 
-  // event, start, end, isSelected
+  const lastView = localStorage.getItem('lastView') || 'week';
+
   const eventStyleGetter = () => {
     const style = {
       backgroundColor: '#347CF7',
@@ -38,19 +23,23 @@ export const CalendarPage = () => {
     return { style };
   };
 
-  // Esta funcion se ejecutara cuando se haga doble click en el evento del calendar
-  const onDoubleClick = (event) => {
-    console.log({ doubleClick: event });
+  // Funcion que se ejecuta al hacer doble click en un evento
+  const onDoubleClick = () => {
+    openDateModal();
   };
 
-  // Esta funcion se ejecutara cuando se haga un click en el evento del calendar
+  // Funcion que se ejecuta al hacer un click en un evento
   const onSelect = (event) => {
-    console.log({ click: event });
+    setActiveEvent(event);
   };
 
-  // Esta funcion se ejecutara cuando cambie la vista del calendar, por ejemplo de mes a semana o de semana a agenda, etc.
+  // Funcion que se ejecuta al cambiar la vista del calendar, por ejemplo cambiar de mes a semana o de semana a dia, etc.
   const onViewChanged = (event) => {
     localStorage.setItem('lastView', event);
+  };
+
+  const onSelectSlot = () => {
+    removeActiveEvent();
   };
 
   return (
@@ -73,8 +62,12 @@ export const CalendarPage = () => {
         onDoubleClickEvent={onDoubleClick}
         onSelectEvent={onSelect}
         onView={onViewChanged}
+        onSelectSlot={onSelectSlot}
+        selectable={true}
       />
       <CalendarModal />
+      <FabAddNew />
+      <FabDelete isDateModalOpen={isDateModalOpen} />
     </>
   );
 };

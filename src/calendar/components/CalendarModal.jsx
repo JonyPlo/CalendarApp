@@ -1,8 +1,14 @@
-import { addHours } from 'date-fns';
-import { useState } from 'react';
+import { addHours, differenceInSeconds } from 'date-fns';
+import { useState, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import es from 'date-fns/locale/es';
+import Swal from 'sweetalert2';
+import { useUiStore } from '../../hooks/useUiStore';
+import { useCalendarStore } from '../../hooks';
+
+registerLocale('es', es);
 
 const customStyles = {
   content: {
@@ -18,14 +24,28 @@ const customStyles = {
 Modal.setAppElement('#root'); // Esto hace que el modal se sobreponga ante todo, lo que va dentro de los parentesis es el elemento html del index.html que contiene el id del root de la aplicacion, en este caso es un div con un id llamado root
 
 export const CalendarModal = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const { isDateModalOpen, closeDateModal } = useUiStore();
+  const { activeEvent, startSavingEvent } = useCalendarStore();
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formValues, setFormValues] = useState({
-    title: 'Jonathan',
-    notes: 'Plodzien',
+    title: '',
+    notes: '',
     start: new Date(),
     end: addHours(new Date(), 2),
   });
+
+  const titleClass = useMemo(() => {
+    if (!formSubmitted) return '';
+
+    return formValues.title.length > 0 ? '' : 'is-invalid';
+  }, [formValues.title, formSubmitted]);
+
+  useEffect(() => {
+    if (activeEvent !== null) {
+      setFormValues({ ...activeEvent });
+    }
+  }, [activeEvent]);
 
   const onInputChange = ({ target }) => {
     const { name, value } = target;
@@ -42,23 +62,43 @@ export const CalendarModal = () => {
     });
   };
 
-  const closeModal = () => {
-    console.log('cerrando modal');
-    setIsOpen(false);
+  const onCloseModal = () => {
+    closeDateModal();
+    setFormSubmitted(false);
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setFormSubmitted(true);
+
+    const difference = differenceInSeconds(formValues.end, formValues.start); // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora inicial y la hora de fin
+
+    if (isNaN(difference) || difference <= 0) {
+      return Swal.fire(
+        'Fechas incorrectas!',
+        'Revisar las fechas ingresadas!',
+        'error'
+      );
+    }
+
+    if (formValues.title.length <= 0) return;
+
+    await startSavingEvent(formValues);
+    onCloseModal();
   };
 
   return (
     <Modal
-      isOpen={isOpen}
-      onRequestClose={closeModal}
+      isOpen={isDateModalOpen}
+      onRequestClose={onCloseModal}
       style={customStyles}
       className='modal'
       overlayClassName={'modal-fondo'}
       closeTimeoutMS={200}
     >
-      <h1> Nuevo evento </h1>
+      <h1>Nuevo evento</h1>
       <hr />
-      <form>
+      <form onSubmit={onSubmit}>
         <div className='form-group mb-2'>
           <label className='d-block'>Fecha y hora inicio</label>
           <DatePicker
@@ -66,6 +106,9 @@ export const CalendarModal = () => {
             className='form-control d-block'
             onChange={(event) => onDateChanged(event, 'start')}
             dateFormat='Pp'
+            showTimeSelect
+            locale={'es'}
+            timeCaption='Hora'
           />
         </div>
 
@@ -73,10 +116,13 @@ export const CalendarModal = () => {
           <label>Fecha y hora fin</label>
           <DatePicker
             minDate={formValues.start}
-            selected={formValues.start}
+            selected={formValues.end}
             className='form-control d-block'
             onChange={(event) => onDateChanged(event, 'end')}
             dateFormat='Pp'
+            showTimeSelect
+            locale={'es'}
+            timeCaption='Hora'
           />
         </div>
 
@@ -85,7 +131,7 @@ export const CalendarModal = () => {
           <label>Titulo y notas</label>
           <input
             type='text'
-            className='form-control'
+            className={`form-control ${titleClass}`}
             placeholder='Título del evento'
             name='title'
             autoComplete='off'
@@ -114,8 +160,8 @@ export const CalendarModal = () => {
 
         <div className='d-flex justify-content-end'>
           <button type='submit' className='btn btn-outline-primary'>
-            <i className='far fa-save'></i>
-            <span> Guardar</span>
+            <i className='far fa-save me-2'></i>
+            <span>Guardar</span>
           </button>
         </div>
       </form>
