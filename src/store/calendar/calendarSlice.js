@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { addHours } from 'date-fns';
+import { createSlice } from '@reduxjs/toolkit'
+import { addHours } from 'date-fns'
 
 const tempEvent = {
   _id: new Date().getTime(),
@@ -10,52 +10,52 @@ const tempEvent = {
   bgColor: '#fafafa',
   user: {
     _id: '123',
-    name: 'Jonathan',
-  },
-};
+    name: 'Jonathan'
+  }
+}
 
 const initialState = {
   events: [tempEvent],
-  activeEvent: null,
-};
+  activeEvent: null
+}
 
 export const calendarSlice = createSlice({
   name: 'calendar',
   initialState,
   reducers: {
     onSetActiveEvent: (state, { payload }) => {
-      state.activeEvent = payload;
+      state.activeEvent = payload
     },
     onAddNewEvent: (state, { payload }) => {
-      state.events.push(payload);
-      state.activeEvent = null;
+      state.events.push(payload)
+      state.activeEvent = null
     },
     onUpdateEvent: (state, { payload }) => {
-      state.events = state.events.map((event) => {
+      state.events = state.events.map(event => {
         if (event._id === payload._id) {
-          return payload;
+          return payload
         }
-        return event;
-      });
+        return event
+      })
     },
-    onDeleteEvent: (state) => {
+    onDeleteEvent: state => {
       if (state.activeEvent) {
         state.events = state.events.filter(
-          (event) => event._id !== state.activeEvent._id
-        );
-        state.activeEvent = null;
+          event => event._id !== state.activeEvent._id
+        )
+        state.activeEvent = null
       }
     },
-    onRemoveActiveEvent: (state) => {
-      state.activeEvent = null;
-    },
-  },
-});
+    onRemoveActiveEvent: state => {
+      state.activeEvent = null
+    }
+  }
+})
 
 export const {
   onSetActiveEvent,
   onAddNewEvent,
   onUpdateEvent,
   onDeleteEvent,
-  onRemoveActiveEvent,
-} = calendarSlice.actions;
+  onRemoveActiveEvent
+} = calendarSlice.actions

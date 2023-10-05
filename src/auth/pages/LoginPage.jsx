@@ -1,4 +1,4 @@
-import './LoginPage.css';
+import './LoginPage.css'
 
 export const LoginPage = () => {
   return (
@@ -71,5 +71,5 @@ export const LoginPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

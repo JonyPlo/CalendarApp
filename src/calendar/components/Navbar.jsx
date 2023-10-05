@@ -10,5 +10,5 @@ export const Navbar = () => {
         <span>Salir</span>
       </button>
     </div>
-  );
-};
+  )
+}
