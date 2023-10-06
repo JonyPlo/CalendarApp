@@ -32,7 +32,10 @@ export const CalendarPage = () => {
     setActiveEvent(event)
   }
 
-  // Funcion que se ejecuta al cambiar la vista del calendar, por ejemplo cambiar de mes a semana o de semana a dia, etc.
+  /**
+   * Funcion que cambia la vista del calendar y la mantiene persistente
+   * @param {object} event - Objeto con la informacion de la vista del calendar.
+   */
   const onViewChanged = event => {
     localStorage.setItem('lastView', event)
   }

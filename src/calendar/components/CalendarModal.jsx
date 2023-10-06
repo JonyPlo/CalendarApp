@@ -25,7 +25,8 @@ Modal.setAppElement('#root') // Esto hace que el modal se sobreponga ante todo, 
 
 export const CalendarModal = () => {
   const { isDateModalOpen, closeDateModal } = useUiStore()
-  const { activeEvent, startSavingEvent } = useCalendarStore()
+  const { activeEvent, startSavingEvent, removeActiveEvent } =
+    useCalendarStore()
   const [formSubmitted, setFormSubmitted] = useState(false)
 
   const [formValues, setFormValues] = useState({
@@ -65,6 +66,10 @@ export const CalendarModal = () => {
   const onCloseModal = () => {
     closeDateModal()
     setFormSubmitted(false)
+    // Condicional que se ejecuta solo cuando se presiona el boton "+" para un nuevo modal
+    if (!activeEvent._id) {
+      removeActiveEvent()
+    }
   }
 
   const onSubmit = async event => {
