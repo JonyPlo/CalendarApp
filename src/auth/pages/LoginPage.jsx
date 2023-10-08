@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2'
 import { useAuthStore, useForm } from '../../hooks'
 import './LoginPage.css'
 
@@ -27,11 +28,25 @@ export const LoginPage = () => {
     onInputChange: onRegisterInputChange
   } = useForm(registerFormFields)
 
-  const { startLogin } = useAuthStore()
+  const { startLogin, startRegister } = useAuthStore()
 
-  const onSubmit = async event => {
+  const loginSubmit = event => {
     event.preventDefault()
-    await startLogin(loginEmail, loginPassword)
+    startLogin(loginEmail, loginPassword)
+  }
+
+  const registerSubmit = event => {
+    event.preventDefault()
+
+    if (registerPassword !== registerPassword2) {
+      return Swal.fire(
+        'Incorrecta password!',
+        'Both passwords must be the same',
+        'error'
+      )
+    }
+
+    dispatchEvent(startRegister(registerName, registerEmail, registerPassword))
   }
 
   return (
@@ -39,7 +54,7 @@ export const LoginPage = () => {
       <div className='row'>
         <div className='col-md-6 login-form-1'>
           <h3>Ingreso</h3>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={loginSubmit}>
             <div className='form-group mb-2'>
               <input
                 type='text'
@@ -70,7 +85,7 @@ export const LoginPage = () => {
 
         <div className='col-md-6 login-form-2'>
           <h3>Registro</h3>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={registerSubmit}>
             <div className='form-group mb-2'>
               <input
                 type='text'
