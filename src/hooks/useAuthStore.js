@@ -38,6 +38,12 @@ export const useAuthStore = () => {
     }
   }
 
+  useEffect(() => {
+    if (errorMessage) {
+      Swal.fire('Authentication error!', `${errorMessage}`, 'error')
+    }
+  }, [errorMessage])
+
   /**
    * Registers a new user and saves the response
    * @param {string} name - User name
@@ -68,11 +74,28 @@ export const useAuthStore = () => {
     }
   }
 
-  useEffect(() => {
-    if (errorMessage) {
-      Swal.fire('Authentication error!', `${errorMessage}`, 'error')
+  const checkAuthToken = async () => {
+    const token = localStorage.getItem('token')
+
+    if (!token) return dispatch(onLogout())
+
+    try {
+      const { data } = await calendarApi.get('auth/renew')
+
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('token-init-date', new Date().getTime())
+
+      dispatch(onLogin({ name: data.name, uid: data.uid }))
+    } catch (error) {
+      localStorage.clear()
+      dispatch(onLogout())
     }
-  }, [errorMessage])
+  }
+
+  const startLogout = () => {
+    localStorage.clear()
+    dispatch(onLogout())
+  }
 
   return {
     //* Properties
@@ -82,6 +105,8 @@ export const useAuthStore = () => {
 
     //* Methods
     startLogin,
-    startRegister
+    startRegister,
+    checkAuthToken,
+    startLogout
   }
 }
