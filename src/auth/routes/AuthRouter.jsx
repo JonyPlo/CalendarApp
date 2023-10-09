@@ -9,9 +9,9 @@ export const AuthRouter = () => {
     checkAuthToken()
   }, [])
 
-  if (status === 'checking') {
-    return <h3>Cargando...</h3>
-  }
+  // if (status === 'checking') {
+  //   return <h3>Cargando...</h3>
+  // }
 
   return status === 'authenticated' ? <Navigate to={'/'} /> : <Outlet />
 }
