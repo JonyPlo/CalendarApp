@@ -6,10 +6,12 @@ import {
   onSetActiveEvent,
   onUpdateEvent
 } from '../store'
+import { calendarApi } from '../api'
 
 export const useCalendarStore = () => {
   const dispatch = useDispatch()
   const { events, activeEvent } = useSelector(state => state.calendar)
+  const { user } = useSelector(state => state.auth)
 
   const setActiveEvent = calendarEvent => {
     dispatch(onSetActiveEvent(calendarEvent))
@@ -25,11 +27,14 @@ export const useCalendarStore = () => {
 
     // Todo bien
     if (calendarEvent._id) {
-      // Actualizando
+      // Update Event
       dispatch(onUpdateEvent({ ...calendarEvent }))
     } else {
-      // Creando
-      dispatch(onAddNewEvent({ ...calendarEvent, _id: new Date().getTime() }))
+      // Create Event
+
+      const { data } = await calendarApi.post('/events', calendarEvent)
+
+      dispatch(onAddNewEvent({ ...calendarEvent, id: data.event.id, user }))
     }
   }
 
