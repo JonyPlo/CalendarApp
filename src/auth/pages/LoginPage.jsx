@@ -1,6 +1,9 @@
 import Swal from 'sweetalert2'
 import { useAuthStore, useForm } from '../../hooks'
 import './LoginPage.css'
+import { LoginButton } from '../components/LoginButton'
+import { RegisterButton } from '../components/RegisterButton'
+import { useState } from 'react'
 
 const loginFormFields = {
   loginEmail: '',
@@ -28,15 +31,19 @@ export const LoginPage = () => {
     onInputChange: onRegisterInputChange
   } = useForm(registerFormFields)
 
+  const [authLoader, setAuthLoader] = useState(null)
+
   const { startLogin, startRegister } = useAuthStore()
 
   const loginSubmit = event => {
     event.preventDefault()
+    setAuthLoader('login')
     startLogin(loginEmail, loginPassword)
   }
 
   const registerSubmit = event => {
     event.preventDefault()
+    setAuthLoader('register')
 
     if (registerPassword !== registerPassword2) {
       return Swal.fire(
@@ -46,7 +53,7 @@ export const LoginPage = () => {
       )
     }
 
-    dispatchEvent(startRegister(registerName, registerEmail, registerPassword))
+    startRegister(registerName, registerEmail, registerPassword)
   }
 
   return (
@@ -75,11 +82,7 @@ export const LoginPage = () => {
                 onChange={onLoginInputChange}
               />
             </div>
-            <div className='d-grid gap-2 mt-3'>
-              <button type='submit' className='btnSubmit' value='Login'>
-                Login
-              </button>
-            </div>
+            <LoginButton authLoader={authLoader} />
           </form>
         </div>
 
@@ -128,11 +131,7 @@ export const LoginPage = () => {
               />
             </div>
 
-            <div className='d-grid gap-2  mt-3'>
-              <button type='submit' className='btnSubmit'>
-                Crear cuenta
-              </button>
-            </div>
+            <RegisterButton authLoader={authLoader} />
           </form>
         </div>
       </div>
