@@ -8,6 +8,7 @@ import {
 } from '../store/auth/authSlice'
 import { useEffect } from 'react'
 import Swal from 'sweetalert2'
+import { onLogoutCalendar } from '../store'
 
 export const useAuthStore = () => {
   const { status, user, errorMessage } = useSelector(state => state.auth)
@@ -94,6 +95,7 @@ export const useAuthStore = () => {
 
   const startLogout = () => {
     localStorage.clear()
+    dispatch(onLogoutCalendar())
     dispatch(onLogout())
   }
 
