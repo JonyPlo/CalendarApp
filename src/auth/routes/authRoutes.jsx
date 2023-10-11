@@ -1,13 +1,13 @@
-import { Navigate } from 'react-router-dom';
-import { LoginPage } from '../pages/LoginPage';
+import { Navigate } from 'react-router-dom'
+import { LoginPage } from '../pages/LoginPage'
 
 export const authRoutes = [
   {
     path: 'login',
-    element: <LoginPage />,
+    element: <LoginPage />
   },
   {
     path: '*',
-    element: <Navigate to={'login'} />,
-  },
-];
+    element: <Navigate to={'login'} />
+  }
+]

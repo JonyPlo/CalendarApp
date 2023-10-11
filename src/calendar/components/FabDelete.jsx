@@ -1,20 +1,17 @@
-import { useCalendarStore } from '../../hooks';
+import { useCalendarStore } from '../../hooks'
 
 export const FabDelete = ({ isDateModalOpen }) => {
-  const { startDeletingEvent, hasEventSelected } = useCalendarStore();
+  const { startDeletingEvent, activeEvent, hasEventSelected } =
+    useCalendarStore()
 
-  const handleDelete = () => {
-    startDeletingEvent();
-  };
-
-  const displayBtn = hasEventSelected && !isDateModalOpen ? '' : 'd-none';
+  const displayBtn = hasEventSelected && !isDateModalOpen ? '' : 'd-none'
 
   return (
     <button
       className={`btn btn-danger fab-danger ${displayBtn}`}
-      onClick={handleDelete}
+      onClick={() => startDeletingEvent(activeEvent)}
     >
       <i className='fas fa-trash-alt'></i>
     </button>
-  );
-};
+  )
+}

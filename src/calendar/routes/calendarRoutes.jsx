@@ -1,13 +1,13 @@
-import { Navigate } from 'react-router-dom';
-import { CalendarPage } from '..';
+import { Navigate } from 'react-router-dom'
+import { CalendarPage } from '..'
 
 export const calendarRoutes = [
   {
     path: '*',
-    element: <CalendarPage />,
+    element: <CalendarPage />
   },
   {
     path: '*',
-    element: <Navigate to={'/'} />,
-  },
-];
+    element: <Navigate to={'/'} />
+  }
+]

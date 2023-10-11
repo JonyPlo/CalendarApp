@@ -1,12 +1,21 @@
-import { Outlet } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom'
+import { useAuthStore } from '../../hooks'
+import { useEffect } from 'react'
 
 export const CalendarRouter = () => {
-  const authStatus = 'authenticated';
+  const { status, checkAuthToken } = useAuthStore()
 
-  return authStatus === 'not-authenticated' ? (
+  useEffect(() => {
+    checkAuthToken()
+  }, [])
+
+  if (status === 'checking') {
+    return <h3>Cargando...</h3>
+  }
+
+  return status === 'not-authenticated' ? (
     <Navigate to={'auth/login'} />
   ) : (
     <Outlet />
-  );
-};
+  )
+}

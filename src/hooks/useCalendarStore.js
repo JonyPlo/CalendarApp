@@ -1,41 +1,125 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux'
 import {
   onAddNewEvent,
   onDeleteEvent,
+  onLoadEvents,
   onRemoveActiveEvent,
   onSetActiveEvent,
-  onUpdateEvent,
-} from '../store';
+  onUpdateEvent
+} from '../store'
+import { calendarApi } from '../api'
+import Swal from 'sweetalert2'
+import { convertEventsToDateEvents } from '../helpers'
 
 export const useCalendarStore = () => {
-  const dispatch = useDispatch();
-  const { events, activeEvent } = useSelector((state) => state.calendar);
+  const dispatch = useDispatch()
+  const { events, activeEvent } = useSelector(state => state.calendar)
+  const { user } = useSelector(state => state.auth)
 
-  const setActiveEvent = (calendarEvent) => {
-    dispatch(onSetActiveEvent(calendarEvent));
-  };
+  const setActiveEvent = calendarEvent => {
+    dispatch(onSetActiveEvent(calendarEvent))
+  }
 
   const removeActiveEvent = () => {
-    dispatch(onRemoveActiveEvent());
-  };
+    dispatch(onRemoveActiveEvent())
+  }
 
-  // Cuando el nombre de la funcion comienza con "start" quiere decir que va a iniciar un proceso de grabación, por lo tanto nos indica que sera funcion asíncrona
-  const startSavingEvent = async (calendarEvent) => {
-    // TODO: llegar al backend
+  /**
+   * Create or update calendar event
+   *
+   * @async
+   * @param {object} calendarEvent - Active event state
+   */
+  const startSavingEvent = async calendarEvent => {
+    try {
+      // Update Event
+      if (calendarEvent.id) {
+        const { data } = await calendarApi.put(
+          `/events/${calendarEvent.id}`,
+          calendarEvent
+        )
 
-    // Todo bien
-    if (calendarEvent._id) {
-      // Actualizando
-      dispatch(onUpdateEvent({ ...calendarEvent }));
-    } else {
-      // Creando
-      dispatch(onAddNewEvent({ ...calendarEvent, _id: new Date().getTime() }));
+        if (data.ok) {
+          dispatch(onUpdateEvent({ ...calendarEvent, user }))
+
+          return Swal.fire(
+            'Updated!',
+            `The event "${data.event.title}" was updated!`,
+            'success'
+          )
+        }
+      }
+
+      // Create Event
+      const { data } = await calendarApi.post('/events', calendarEvent)
+
+      if (data.ok) {
+        dispatch(
+          onAddNewEvent({
+            ...calendarEvent,
+            id: data.event.id,
+            user
+          })
+        )
+
+        Swal.fire(
+          'Saved!',
+          `The event "${data.event.title}" was saved!`,
+          'success'
+        )
+      }
+    } catch (error) {
+      console.log(error)
+      Swal.fire('Error!', 'Error creating or updating event!', 'error')
     }
-  };
+  }
 
-  const startDeletingEvent = async () => {
-    dispatch(onDeleteEvent());
-  };
+  /**
+   * Delete calendar event
+   *
+   * @async
+   * @param {object} calendarEvent - Active event state
+   */
+  const startDeletingEvent = calendarEvent => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#347CF7',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then(async result => {
+      if (result.isConfirmed) {
+        try {
+          const { data } = await calendarApi.delete(
+            `/events/${calendarEvent.id}`
+          )
+
+          if (data.ok) {
+            dispatch(onDeleteEvent())
+
+            Swal.fire('Deleted!', `${data.msg}`, 'success')
+          }
+        } catch (error) {
+          console.log(error)
+          Swal.fire('Error!', 'Error deleting event!', 'error')
+        }
+      }
+    })
+  }
+
+  const startLoadingEvents = async () => {
+    try {
+      const { data } = await calendarApi.get('/events')
+      const events = convertEventsToDateEvents(data.events)
+
+      dispatch(onLoadEvents(events))
+    } catch (error) {
+      console.log(error)
+      Swal.fire('Error!', 'Error loading events', 'error')
+    }
+  }
 
   return {
     //* Properties
@@ -48,5 +132,6 @@ export const useCalendarStore = () => {
     setActiveEvent,
     startSavingEvent,
     removeActiveEvent,
-  };
-};
+    startLoadingEvents
+  }
+}

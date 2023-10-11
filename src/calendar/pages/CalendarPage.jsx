@@ -1,46 +1,57 @@
-import { Calendar } from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Calendar } from 'react-big-calendar'
+import 'react-big-calendar/lib/css/react-big-calendar.css'
 
-import { CalendarEvent, CalendarModal, FabAddNew, FabDelete, Navbar } from '..';
-import { localizer, getMessages } from '../../helpers';
-import { useUiStore } from '../../hooks';
-import { useCalendarStore } from '../../hooks';
+import { CalendarEvent, CalendarModal, FabAddNew, FabDelete, Navbar } from '..'
+import { localizer, getMessages } from '../../helpers'
+import { useUiStore, useCalendarStore, useAuthStore } from '../../hooks'
+import { useEffect } from 'react'
 
 export const CalendarPage = () => {
-  const { events, setActiveEvent, removeActiveEvent } = useCalendarStore();
-  const { openDateModal, isDateModalOpen } = useUiStore();
+  const { user } = useAuthStore()
+  const { events, setActiveEvent, removeActiveEvent, startLoadingEvents } =
+    useCalendarStore()
+  const { openDateModal, isDateModalOpen } = useUiStore()
 
-  const lastView = localStorage.getItem('lastView') || 'week';
+  const lastView = localStorage.getItem('lastView') || 'week'
 
-  const eventStyleGetter = () => {
+  const eventStyleGetter = event => {
+    const isMyEvent = user._id === event.user?._id
+
     const style = {
-      backgroundColor: '#347CF7',
+      backgroundColor: isMyEvent ? '#347CF7' : '#465660',
       borderRadius: '0px',
       opacity: 0.8,
-      color: 'white',
-    };
+      color: 'white'
+    }
 
-    return { style };
-  };
+    return { style }
+  }
 
   // Funcion que se ejecuta al hacer doble click en un evento
   const onDoubleClick = () => {
-    openDateModal();
-  };
+    openDateModal()
+  }
 
   // Funcion que se ejecuta al hacer un click en un evento
-  const onSelect = (event) => {
-    setActiveEvent(event);
-  };
+  const onSelect = event => {
+    setActiveEvent(event)
+  }
 
-  // Funcion que se ejecuta al cambiar la vista del calendar, por ejemplo cambiar de mes a semana o de semana a dia, etc.
-  const onViewChanged = (event) => {
-    localStorage.setItem('lastView', event);
-  };
+  /**
+   * Funcion que cambia la vista del calendar y la mantiene persistente
+   * @param {object} event - Objeto con la informacion de la vista del calendar.
+   */
+  const onViewChanged = event => {
+    localStorage.setItem('lastView', event)
+  }
 
   const onSelectSlot = () => {
-    removeActiveEvent();
-  };
+    removeActiveEvent()
+  }
+
+  useEffect(() => {
+    startLoadingEvents()
+  }, [])
 
   return (
     <>
@@ -57,7 +68,7 @@ export const CalendarPage = () => {
         messages={getMessages()}
         eventPropGetter={eventStyleGetter}
         components={{
-          event: CalendarEvent,
+          event: CalendarEvent
         }}
         onDoubleClickEvent={onDoubleClick}
         onSelectEvent={onSelect}
@@ -69,5 +80,5 @@ export const CalendarPage = () => {
       <FabAddNew />
       <FabDelete isDateModalOpen={isDateModalOpen} />
     </>
-  );
-};
+  )
+}

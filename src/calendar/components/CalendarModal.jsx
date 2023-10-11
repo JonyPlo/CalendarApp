@@ -1,14 +1,14 @@
-import { addHours, differenceInSeconds } from 'date-fns';
-import { useState, useEffect, useMemo } from 'react';
-import Modal from 'react-modal';
-import DatePicker, { registerLocale } from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import es from 'date-fns/locale/es';
-import Swal from 'sweetalert2';
-import { useUiStore } from '../../hooks/useUiStore';
-import { useCalendarStore } from '../../hooks';
+import { addHours, differenceInSeconds } from 'date-fns'
+import { useState, useEffect, useMemo } from 'react'
+import Modal from 'react-modal'
+import DatePicker, { registerLocale } from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import es from 'date-fns/locale/es'
+import Swal from 'sweetalert2'
+import { useUiStore } from '../../hooks/useUiStore'
+import { useCalendarStore } from '../../hooks'
 
-registerLocale('es', es);
+registerLocale('es', es)
 
 const customStyles = {
   content: {
@@ -17,75 +17,80 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
     maxHeight: '590px',
     maxWidth: '515px',
-    padding: '20px 25px',
-  },
-};
+    padding: '20px 25px'
+  }
+}
 
-Modal.setAppElement('#root'); // Esto hace que el modal se sobreponga ante todo, lo que va dentro de los parentesis es el elemento html del index.html que contiene el id del root de la aplicacion, en este caso es un div con un id llamado root
+Modal.setAppElement('#root') // Esto hace que el modal se sobreponga ante todo, lo que va dentro de los parentesis es el elemento html del index.html que contiene el id del root de la aplicacion, en este caso es un div con un id llamado root
 
 export const CalendarModal = () => {
-  const { isDateModalOpen, closeDateModal } = useUiStore();
-  const { activeEvent, startSavingEvent } = useCalendarStore();
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const { isDateModalOpen, closeDateModal } = useUiStore()
+  const { activeEvent, startSavingEvent, removeActiveEvent } =
+    useCalendarStore()
+  const [formSubmitted, setFormSubmitted] = useState(false)
 
   const [formValues, setFormValues] = useState({
     title: '',
     notes: '',
     start: new Date(),
-    end: addHours(new Date(), 2),
-  });
+    end: addHours(new Date(), 2)
+  })
 
   const titleClass = useMemo(() => {
-    if (!formSubmitted) return '';
+    if (!formSubmitted) return ''
 
-    return formValues.title.length > 0 ? '' : 'is-invalid';
-  }, [formValues.title, formSubmitted]);
+    return formValues.title.length > 0 ? '' : 'is-invalid'
+  }, [formValues.title, formSubmitted])
 
   useEffect(() => {
     if (activeEvent !== null) {
-      setFormValues({ ...activeEvent });
+      setFormValues({ ...activeEvent })
     }
-  }, [activeEvent]);
+  }, [activeEvent])
 
   const onInputChange = ({ target }) => {
-    const { name, value } = target;
+    const { name, value } = target
     setFormValues({
       ...formValues,
-      [name]: value,
-    });
-  };
+      [name]: value
+    })
+  }
 
   const onDateChanged = (event, changing) => {
     setFormValues({
       ...formValues,
-      [changing]: event,
-    });
-  };
+      [changing]: event
+    })
+  }
 
   const onCloseModal = () => {
-    closeDateModal();
-    setFormSubmitted(false);
-  };
+    closeDateModal()
+    setFormSubmitted(false)
+    // Condicional que se ejecuta solo cuando se presiona el boton "+" para un nuevo modal
+    if (!activeEvent._id) {
+      removeActiveEvent()
+    }
+  }
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    setFormSubmitted(true);
+  const onSubmit = async event => {
+    event.preventDefault()
+    setFormSubmitted(true)
 
-    const difference = differenceInSeconds(formValues.end, formValues.start); // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora inicial y la hora de fin
+    const difference = differenceInSeconds(formValues.end, formValues.start) // Este metodo nos retorna la cantidad de segundos que tienen de diferencia entre la hora inicial y la hora de fin
 
     if (isNaN(difference) || difference <= 0) {
       return Swal.fire(
         'Fechas incorrectas!',
         'Revisar las fechas ingresadas!',
         'error'
-      );
+      )
     }
 
-    if (formValues.title.length <= 0) return;
+    if (formValues.title.length <= 0) return
 
-    await startSavingEvent(formValues);
-    onCloseModal();
-  };
+    await startSavingEvent(formValues)
+    onCloseModal()
+  }
 
   return (
     <Modal
@@ -104,7 +109,7 @@ export const CalendarModal = () => {
           <DatePicker
             selected={formValues.start}
             className='form-control d-block'
-            onChange={(event) => onDateChanged(event, 'start')}
+            onChange={event => onDateChanged(event, 'start')}
             dateFormat='Pp'
             showTimeSelect
             locale={'es'}
@@ -118,7 +123,7 @@ export const CalendarModal = () => {
             minDate={formValues.start}
             selected={formValues.end}
             className='form-control d-block'
-            onChange={(event) => onDateChanged(event, 'end')}
+            onChange={event => onDateChanged(event, 'end')}
             dateFormat='Pp'
             showTimeSelect
             locale={'es'}
@@ -166,5 +171,5 @@ export const CalendarModal = () => {
         </div>
       </form>
     </Modal>
-  );
-};
+  )
+}
