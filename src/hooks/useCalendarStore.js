@@ -25,7 +25,8 @@ export const useCalendarStore = () => {
   }
 
   /**
-   * Cuando el nombre de la funcion comienza con "start" quiere decir que va a iniciar un proceso de grabación, por lo tanto nos indica que sera funcion asíncrona
+   * Create or update calendar event
+   *
    * @async
    * @param {object} calendarEvent - Active event state
    */
@@ -73,8 +74,39 @@ export const useCalendarStore = () => {
     }
   }
 
-  const startDeletingEvent = async () => {
-    dispatch(onDeleteEvent())
+  /**
+   * Delete calendar event
+   *
+   * @async
+   * @param {object} calendarEvent - Active event state
+   */
+  const startDeletingEvent = calendarEvent => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#347CF7',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then(async result => {
+      if (result.isConfirmed) {
+        try {
+          const { data } = await calendarApi.delete(
+            `/events/${calendarEvent.id}`
+          )
+
+          if (data.ok) {
+            dispatch(onDeleteEvent())
+
+            Swal.fire('Deleted!', `${data.msg}`, 'success')
+          }
+        } catch (error) {
+          console.log(error)
+          Swal.fire('Error!', 'Error deleting event!', 'error')
+        }
+      }
+    })
   }
 
   const startLoadingEvents = async () => {

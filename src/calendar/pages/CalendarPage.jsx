@@ -15,10 +15,7 @@ export const CalendarPage = () => {
   const lastView = localStorage.getItem('lastView') || 'week'
 
   const eventStyleGetter = event => {
-    const { _id: eventId = '' } = event.user
-    const { _id: userId } = user
-
-    const isMyEvent = userId === eventId
+    const isMyEvent = user._id === event.user?._id
 
     const style = {
       backgroundColor: isMyEvent ? '#347CF7' : '#465660',
