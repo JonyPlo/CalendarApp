@@ -8,6 +8,7 @@ import {
 } from '../store/auth/authSlice'
 import { useEffect } from 'react'
 import Swal from 'sweetalert2'
+import { onLogoutCalendar } from '../store'
 
 export const useAuthStore = () => {
   const { status, user, errorMessage } = useSelector(state => state.auth)
@@ -28,7 +29,7 @@ export const useAuthStore = () => {
       localStorage.setItem('token', data.token)
       localStorage.setItem('token-init-date', new Date().getTime())
 
-      dispatch(onLogin({ name: data.name, uid: data.uid }))
+      dispatch(onLogin({ name: data.name, _id: data.uid }))
     } catch (error) {
       dispatch(onLogout('Incorrect credentials'))
 
@@ -63,7 +64,7 @@ export const useAuthStore = () => {
       localStorage.setItem('token', data.token)
       localStorage.setItem('token-init-date', new Date().getTime())
 
-      dispatch(onLogin({ name: data.name, uid: data.uid }))
+      dispatch(onLogin({ name: data.name, _id: data.uid }))
     } catch (error) {
       console.log(error.response.data)
       dispatch(onLogout(error.response.data?.msg || 'An error has ocurred'))
@@ -85,7 +86,7 @@ export const useAuthStore = () => {
       localStorage.setItem('token', data.token)
       localStorage.setItem('token-init-date', new Date().getTime())
 
-      dispatch(onLogin({ name: data.name, uid: data.uid }))
+      dispatch(onLogin({ name: data.name, _id: data.uid }))
     } catch (error) {
       localStorage.clear()
       dispatch(onLogout())
@@ -94,6 +95,7 @@ export const useAuthStore = () => {
 
   const startLogout = () => {
     localStorage.clear()
+    dispatch(onLogoutCalendar())
     dispatch(onLogout())
   }
 
