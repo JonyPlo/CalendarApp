@@ -1,6 +1,6 @@
 import calendarApi from '../../src/api/calendarApi'
 
-describe('Tests in calendarApi', () => {
+describe('Testing in calendarApi', () => {
   test('should have a default configuration', () => {
     expect(calendarApi.defaults.baseURL).toBe(process.env.VITE_API_URL)
   })
