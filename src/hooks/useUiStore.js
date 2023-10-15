@@ -4,7 +4,7 @@ import { onCloseDateModal, onOpenDateModal } from '../store'
 export const useUiStore = () => {
   const dispatch = useDispatch()
 
-  const { isDateModalOpen } = useSelector(state => state.ui)
+  const { isDateModalOpen } = useSelector((state) => state.ui)
 
   const openDateModal = () => {
     dispatch(onOpenDateModal())
@@ -16,7 +16,7 @@ export const useUiStore = () => {
 
   // Esta funcion se utilizaría como toggle en caso que queramos usar una sola funcion para abrir y cerrar el modal
   const toggleDateModal = () => {
-    isDateModalOpen ? openDateModal() : closeDateModal()
+    isDateModalOpen ? closeDateModal() : openDateModal()
   }
 
   return {
@@ -26,6 +26,6 @@ export const useUiStore = () => {
     //* Methods
     closeDateModal,
     openDateModal,
-    toggleDateModal
+    toggleDateModal,
   }
 }

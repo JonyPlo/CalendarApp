@@ -6,10 +6,14 @@ export const FabDelete = ({ isDateModalOpen }) => {
 
   const displayBtn = hasEventSelected && !isDateModalOpen ? '' : 'd-none'
 
+  const handleDelete = () => {
+    startDeletingEvent(activeEvent)
+  }
+
   return (
     <button
       className={`btn btn-danger fab-danger ${displayBtn}`}
-      onClick={() => startDeletingEvent(activeEvent)}
+      onClick={handleDelete}
     >
       <i className='fas fa-trash-alt'></i>
     </button>
