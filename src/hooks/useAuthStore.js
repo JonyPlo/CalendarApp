@@ -66,7 +66,6 @@ export const useAuthStore = () => {
 
       dispatch(onLogin({ name: data.name, _id: data.uid }))
     } catch (error) {
-      console.log(error.response.data)
       dispatch(onLogout(error.response.data?.msg || 'An error has ocurred'))
 
       setTimeout(() => {
