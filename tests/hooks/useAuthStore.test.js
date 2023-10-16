@@ -150,12 +150,56 @@ describe('Testing in useAuthStore', () => {
 
     const { errorMessage, status, user } = result.current
 
-    console.log(result.current)
-
     expect({ errorMessage, status, user }).toEqual({
       errorMessage: 'User already exists',
       status: 'not-authenticated',
       user: {},
+    })
+  })
+
+  test('checkAuthToken should fail if token does not exist', async () => {
+    const mockStore = getMockStore({ ...initialState })
+    const { result } = renderHook(() => useAuthStore(), {
+      wrapper: ({ children }) => (
+        <Provider store={mockStore}>{children}</Provider>
+      ),
+    })
+
+    await act(async () => {
+      await result.current.checkAuthToken()
+    })
+
+    const { errorMessage, status, user } = result.current
+
+    expect({ errorMessage, status, user }).toEqual({
+      errorMessage: undefined,
+      status: 'not-authenticated',
+      user: {},
+    })
+  })
+
+  test('checkAuthToken should authenticate user if token exist', async () => {
+    const { data } = await calendarApi.post('/auth', testUserCredentials)
+
+    localStorage.setItem('token', data.token)
+
+    const mockStore = getMockStore({ ...initialState })
+    const { result } = renderHook(() => useAuthStore(), {
+      wrapper: ({ children }) => (
+        <Provider store={mockStore}>{children}</Provider>
+      ),
+    })
+
+    await act(async () => {
+      await result.current.checkAuthToken()
+    })
+
+    const { errorMessage, status, user } = result.current
+
+    expect({ errorMessage, status, user }).toEqual({
+      errorMessage: undefined,
+      status: 'authenticated',
+      user: { name: 'Test User', _id: '6528259c5f7e338b125ac014' },
     })
   })
 })
